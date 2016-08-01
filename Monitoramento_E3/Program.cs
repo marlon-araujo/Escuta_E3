@@ -243,10 +243,9 @@ namespace Monitoramento_E3
                 Console.WriteLine("\n" + m.Mensagem);
 
                 #region Endereço MongoDB
+                //m.Endereco = Mensagens.RequisitarEndereco(m.Latitude, m.Longitude);
                 try
                 {
-                    //m.Endereco = Mensagens.RequisitarEndereco(m.Latitude, m.Longitude);
-                    //pesquisar mongoDB
                     var pos = new Posicionamento();
                     var enderecoMONGO = pos.PesquisarEndereco(m.Latitude, m.Longitude);
                     if (enderecoMONGO == "")
@@ -259,9 +258,8 @@ namespace Monitoramento_E3
                     }
                     else
                     {
-                        StreamWriter soma = new StreamWriter("Mongo_Qtde.txt", true);
-                        soma.WriteLine("1");
-                        soma.Close();
+                        //soma +1 mongo
+                        Mensagens.GravarRequisicoes("mongo");
                     }
                 }
                 catch (Exception e)
