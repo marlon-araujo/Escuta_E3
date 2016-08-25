@@ -26,7 +26,7 @@ namespace Monitoramento_E3
             socket = new TcpListener(IPAddress.Any, 7003);
             try
             {
-                Console.WriteLine("Conectado! " + i++);
+                Console.WriteLine("Conectado!");
 
                 socket.Start();                
 
@@ -108,12 +108,10 @@ namespace Monitoramento_E3
 
                     var mensagem = mensagem_traduzida.Split(',').ToList();
 
-                    if(mensagem[1] == "358155100046320"){
-                        StreamWriter wr = new StreamWriter("Mensagem do E3.txt", true);
-                        wr.WriteLine(bytes);
-                        wr.WriteLine("\n " + DateTime.Now);
-                        wr.Close();
-                    }
+                    //mensagem original
+                    /*StreamWriter wr = new StreamWriter("Mensagem do E3.txt", true);
+                    wr.WriteLine(mensagem_traduzida);
+                    wr.Close();*/
 
                     //Console.WriteLine(mensagem_traduzida);
 
@@ -171,7 +169,7 @@ namespace Monitoramento_E3
             }
             client.Close();
         }
-
+        
         private static void Interpretar_Msg(List<String> mensagem)
         {
             string id = "";
@@ -289,7 +287,7 @@ namespace Monitoramento_E3
                 #endregion
 
                 #region Horimetro
-                try
+                /*try
                 {
                     if (m.Latitude != "+00.0000" && m.Latitude != "")
                         new Horimetro().atualizaHorimetro(m);
@@ -297,7 +295,7 @@ namespace Monitoramento_E3
                 catch (Exception ex)
                 {
                     Console.WriteLine("\n" + ex.ToString());
-                }
+                }*/
                 #endregion
 
                 #region Gravar
