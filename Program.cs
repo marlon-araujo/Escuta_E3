@@ -60,10 +60,8 @@ namespace Monitoramento_E3
             TcpClient client = (TcpClient)param;
             NetworkStream stream;
             stream = client.GetStream();
-
-
+            
             //Thread tcpLSendThread = new Thread(new ParameterizedThreadStart(TcpLSendThread));
-
 
             Byte[] bytes = new Byte[99999];
             String mensagem_traduzida;
@@ -75,11 +73,12 @@ namespace Monitoramento_E3
             try
             {
 
-
                 while (from_raster && (i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
                     //Console.WriteLine(Encoding.UTF8.GetString(bytes, 0, i));
                     mensagem_traduzida = Encoding.UTF8.GetString(bytes, 0, i);
+                    
+                    //var a = 
                     /*
                     0 "\\*..," +                          // Manufacturer
                     1 "(\\d+)," +                         // IMEI
@@ -109,7 +108,7 @@ namespace Monitoramento_E3
                     var mensagem = mensagem_traduzida.Split(',').ToList();
 
                     //mensagem original
-                    /*StreamWriter wr = new StreamWriter("Mensagem do E3.txt", true);
+                    /*StreamWriter wr = new StreamWriter("mensagem_original.txt", true);
                     wr.WriteLine(mensagem_traduzida);
                     wr.Close();*/
 
@@ -205,15 +204,17 @@ namespace Monitoramento_E3
                 m.Latitude = (mensagem[6][0] == '8' ? "-" : "+") + (int.Parse(mensagem[6].Substring(1), System.Globalization.NumberStyles.HexNumber) / 600000.00).ToString().Replace(',', '.');
                 m.Longitude = (mensagem[7][0] == '8' ? "-" : "+") + (int.Parse(mensagem[7].Substring(1), System.Globalization.NumberStyles.HexNumber) / 600000.00).ToString().Replace(',', '.');
                 m.Hodometro = Convert.ToString(int.Parse(mensagem[14], System.Globalization.NumberStyles.HexNumber) / 10);
-                m.Tensao = mensagem[12];
-                m.Velocidade = Convert.ToString(UInt16.Parse(mensagem[9][0].ToString() + mensagem[9][1].ToString(), NumberStyles.HexNumber));
+                m.Tensao = mensagem[12];    
+                m.Velocidade = Convert.ToString(Convert.ToInt32(UInt16.Parse(mensagem[8].ToString(), NumberStyles.HexNumber)) / 100);
                 m.Vei_codigo = r.Vei_codigo != 0 ? r.Vei_codigo : 0;
                 m.Tipo_Alerta = "";
                 m.CodAlerta = 0;
                 m.Bloqueio = status[4] == '1' ? true : false;
                 m.Sirene = status[5] == '1' ? true : false;
-                m.Ignicao = s[0] == '1' ? true : false;
+                //m.Ignicao = s[0] == '1' ? true : false;
+                m.Ignicao = Convert.ToInt32(m.Velocidade) > 0 ? true : false;
                 m.Horimetro = 0;
+                
 
                 m.Mensagem = "ET01;" + //Modelo do equipamento
                               id + //IMEI
@@ -374,6 +375,12 @@ namespace Monitoramento_E3
                     }
 
                 }
+                /*else
+                {
+                    StreamWriter wr = new StreamWriter("Erro_fdp.txt", true);
+                    wr.WriteLine("\n\n " + m.erro);
+                    wr.Close();
+                }*/
                 #endregion
             }
             catch (Exception e)
