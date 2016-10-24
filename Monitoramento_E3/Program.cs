@@ -237,39 +237,12 @@ namespace Monitoramento_E3
                              + status + ";" //Ignição/bloqueio/Sirene
                              + s[0] //ignição
                              + ";0;0;0;0";
+
+                //m.Endereco = Mensagens.RequisitarEndereco(m.Latitude, m.Longitude);
+                m.Endereco = BuscarEndereco(m.Latitude, m.Longitude);
                 #endregion
 
                 Console.WriteLine("\n" + m.Mensagem);
-
-                #region Endereço MongoDB
-                //m.Endereco = Mensagens.RequisitarEndereco(m.Latitude, m.Longitude);
-                try
-                {
-                    var pos = new Posicionamento();
-                    var enderecoMONGO = pos.PesquisarEndereco(m.Latitude, m.Longitude);
-                    if (enderecoMONGO == "")
-                    {
-                        pos.Endereco = Mensagens.RequisitarEndereco(m.Latitude, m.Longitude);
-                        m.Endereco = pos.Endereco;
-                        pos.Latitude = m.Latitude;
-                        pos.Longitude = m.Longitude;
-                        pos.Gravar();
-                    }
-                    else
-                    {
-                        //soma +1 mongo
-                        Mensagens.GravarRequisicoes("mongo");
-                    }
-                }
-                catch (Exception e)
-                {
-                    StreamWriter txt = new StreamWriter("Erro_Mongo.txt", true);
-                    txt.WriteLine(string.Format("ERRO:{0} /n DATA:{1}", e.Message.ToString(), DateTime.Now));
-                    txt.Close();
-
-                    m.Endereco = Mensagens.RequisitarEndereco(m.Latitude, m.Longitude);
-                }
-                #endregion
 
                 #region Eventos
                 if (mensagem[10][3] == '4')
@@ -285,18 +258,6 @@ namespace Monitoramento_E3
                     m.CodAlerta = 19;
                     m.Tipo_Mensagem = "EMG";
                 }
-                #endregion
-
-                #region Horimetro
-                /*try
-                {
-                    if (m.Latitude != "+00.0000" && m.Latitude != "")
-                        new Horimetro().atualizaHorimetro(m);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("\n" + ex.ToString());
-                }*/
                 #endregion
 
                 #region Gravar
@@ -392,6 +353,37 @@ namespace Monitoramento_E3
 
         }
 
+        public static string BuscarEndereco(string _lat, string _lng)
+        {
+            try
+            {
+                var pos = new Posicionamento();
+                var enderecoMONGO = _lat != "+00.0000" && _lat != "" ? pos.PesquisarEndereco(_lat, _lng) : "Endereço Indisponível";
+
+                if (enderecoMONGO != "Endereço Indisponível")
+                {
+                    Mensagens.GravarRequisicoes("mongo");
+                }
+                else
+                {
+                    enderecoMONGO = Mensagens.RequisitarEndereco(_lat, _lng);
+                    pos.Endereco = enderecoMONGO;
+                    pos.Latitude = _lat;
+                    pos.Longitude = _lng;
+                    pos.Gravar();
+                }
+
+                return enderecoMONGO;
+            }
+            catch (Exception e)
+            {
+                StreamWriter txt = new StreamWriter("mongo_erro_nova_funcao.txt", true);
+                txt.WriteLine("ERRO: " + e.Message.ToString());
+                txt.Close();
+
+                return Mensagens.RequisitarEndereco(_lat, _lng);
+            }
+        }
 
     }
 }
