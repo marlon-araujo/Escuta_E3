@@ -239,7 +239,7 @@ namespace Monitoramento_E3
                              + ";0;0;0;0";
 
                 //m.Endereco = Mensagens.RequisitarEndereco(m.Latitude, m.Longitude);
-                m.Endereco = BuscarEndereco(m.Latitude, m.Longitude);
+                m.Endereco = Util.BuscarEndereco(m.Latitude, m.Longitude);
                 #endregion
 
                 Console.WriteLine("\n" + m.Mensagem);
@@ -351,38 +351,6 @@ namespace Monitoramento_E3
                 wr.Close();
             }
 
-        }
-
-        public static string BuscarEndereco(string _lat, string _lng)
-        {
-            try
-            {
-                var pos = new Posicionamento();
-                var enderecoMONGO = _lat != "+00.0000" && _lat != "" ? pos.PesquisarEndereco(_lat, _lng) : "Endereço Indisponível";
-
-                if (enderecoMONGO != "Endereço Indisponível")
-                {
-                    Mensagens.GravarRequisicoes("mongo");
-                }
-                else
-                {
-                    enderecoMONGO = Mensagens.RequisitarEndereco(_lat, _lng);
-                    pos.Endereco = enderecoMONGO;
-                    pos.Latitude = _lat;
-                    pos.Longitude = _lng;
-                    pos.Gravar();
-                }
-
-                return enderecoMONGO;
-            }
-            catch (Exception e)
-            {
-                StreamWriter txt = new StreamWriter("mongo_erro_nova_funcao.txt", true);
-                txt.WriteLine("ERRO: " + e.Message.ToString());
-                txt.Close();
-
-                return Mensagens.RequisitarEndereco(_lat, _lng);
-            }
         }
 
     }
