@@ -67,7 +67,7 @@ namespace Monitoramento_E3
             Byte[] bytes = new Byte[99999];
             String mensagem_traduzida;
             string id = "-1";
-            int x = 0;
+            //int x = 0;
             int i;
             bool from_raster = true;
             stream.ReadTimeout = 1200000;
@@ -176,7 +176,7 @@ namespace Monitoramento_E3
 
             try
             {
-                bool gravar = false;
+                //bool gravar = false;
                 id = mensagem[1];
                 Rastreador r = new Rastreador();
                 r.PorId(id);
@@ -271,7 +271,7 @@ namespace Monitoramento_E3
                 #region Gravar
                 if (m.Gravar())
                 {
-                    gravar = false;
+                    //gravar = false;
                     m.Tipo_Mensagem = "EMG";
                     if (r.veiculo != null)
                     {
