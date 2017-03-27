@@ -19,7 +19,7 @@ namespace Monitoramento_E3
     {
         private static SortedDictionary<string, TcpClient> socket_rastreadores = new SortedDictionary<string, TcpClient>();
 
-        private static int i = 0;
+        //private static int i = 0;
         private static void Main()
         {
 
