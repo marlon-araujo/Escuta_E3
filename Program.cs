@@ -44,6 +44,7 @@ namespace Monitoramento_E3
             catch (Exception ex)
             {
                 Console.WriteLine("\n" + ex.Message);
+                LogException.GravarException("Erro: " + ex.Message.ToString() + " - Mensagem: " + (ex.InnerException != null ? ex.InnerException.ToString() : " Valor nulo na mensagem "), 12, "Escuta E3 - Método " + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             finally
             {
@@ -162,9 +163,10 @@ namespace Monitoramento_E3
 
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("\n" + e.Message);
+                LogException.GravarException("Erro: " + ex.Message.ToString() + " - Mensagem: " + (ex.InnerException != null ? ex.InnerException.ToString() : " Valor nulo na mensagem "), 12, "Escuta E3 - Método " + System.Reflection.MethodBase.GetCurrentMethod().Name);
+                Console.WriteLine("\n" + ex.Message);
                 client.Close();
             }
             client.Close();
@@ -278,17 +280,35 @@ namespace Monitoramento_E3
                         Mensagens.EventoAreaCerca(m);
                     }
 
+
+                    #region Velocidade
+                    if (r.Vei_codigo != 0)
+                    {
+                        var veiculo = Veiculo.BuscarVeiculoVelocidade(m.Vei_codigo);
+                        var velocidade_nova = Convert.ToDecimal(veiculo.vei_velocidade);
+                        if (velocidade_nova < Convert.ToDecimal(m.Velocidade) && velocidade_nova > 0)
+                        {
+                            m.Tipo_Mensagem = "EVT";
+                            m.Tipo_Alerta = "Veículo Ultrapassou a Velocidade";
+                            m.CodAlerta = 23;
+                            m.GravarEvento();
+                        }
+                    }
+                    #endregion
+
+
                     //Evento Por E-mail
                     Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, m.Tipo_Alerta);
                 }
                 #endregion
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                StreamWriter wr = new StreamWriter("Erro interpretacao.txt", true);
+                LogException.GravarException("Erro: " + ex.Message.ToString() + " - Mensagem: " + (ex.InnerException != null ? ex.InnerException.ToString() : " Valor nulo na mensagem "), 12, "Escuta E3 - Método " + System.Reflection.MethodBase.GetCurrentMethod().Name);
+                /*StreamWriter wr = new StreamWriter("Erro interpretacao.txt", true);
                 wr.WriteLine(string.Format("ERRO:{0} /n DATA:{1} ID:{2} LOCAL:{3}", e.ToString(), DateTime.Now, id, e.StackTrace));
-                wr.Close();
+                wr.Close();*/
             }
 
         }
