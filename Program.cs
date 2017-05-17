@@ -278,6 +278,10 @@ namespace Monitoramento_E3
                     if (r.veiculo != null)
                     {
                         Mensagens.EventoAreaCerca(m);
+
+                        //Evento Por E-mail
+                        var corpoEmail = m.Tipo_Alerta + "<br /> Endereço: " + m.Endereco;
+                        Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, corpoEmail);
                     }
 
 
@@ -292,13 +296,14 @@ namespace Monitoramento_E3
                             m.Tipo_Alerta = "Veículo Ultrapassou a Velocidade";
                             m.CodAlerta = 23;
                             m.GravarEvento();
+
+                            //Evento Por E-mail
+                            var corpoEmail = m.Tipo_Alerta + "<br /> Velocidade: " + m.Velocidade + "<br /> Endereço: " + m.Endereco;
+                            Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, corpoEmail);
                         }
                     }
                     #endregion
 
-
-                    //Evento Por E-mail
-                    Mensagens.EventoPorEmail(m.Vei_codigo, m.CodAlerta, m.Tipo_Alerta);
                 }
                 #endregion
 
