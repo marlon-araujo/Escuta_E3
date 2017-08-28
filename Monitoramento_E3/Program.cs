@@ -34,6 +34,8 @@ namespace Monitoramento_E3
             XmlNodeList coluna = xDoc.GetElementsByTagName("coluna");
             XmlNodeList app_id = xDoc.GetElementsByTagName("app_id");
             XmlNodeList app_code = xDoc.GetElementsByTagName("app_code");
+            XmlNodeList inicio = xDoc.GetElementsByTagName("inicio");
+            XmlNodeList fim = xDoc.GetElementsByTagName("fim");
 
             for (int i = 0; i < coluna.Count; i++)
             {
@@ -41,6 +43,8 @@ namespace Monitoramento_E3
                 itens.Add(coluna[i].InnerText);
                 itens.Add(app_id[i].InnerText);
                 itens.Add(app_code[i].InnerText);
+                itens.Add(inicio[i].InnerText);
+                itens.Add(fim[i].InnerText);
                 contas.Add(itens);
             }
 
